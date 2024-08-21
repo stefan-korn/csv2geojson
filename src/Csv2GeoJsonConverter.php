@@ -50,7 +50,14 @@ class Csv2GeoJsonConverter {
    * @var bool order of latitude and longitude in CSV columns
    *
    * false means first longitude, second latitude
-   * true means inversed
+   * true means reversed
+   *
+   * default is longitude/latitude for GeoJSON
+   * from the RFC 7946 SPEC:
+   * A position is an array of numbers.  There MUST be two or more
+   * elements.  The first two elements are longitude and latitude, or
+   * easting and northing, precisely in that order and using decimal
+   * numbers
    */
   protected $latlon = FALSE;
 
@@ -63,10 +70,19 @@ class Csv2GeoJsonConverter {
    * convert CSV string to GeoJSON Feature Collection
    *
    * @param $csv_string
+   *   csv as a string
    * @param $name
    * @param $geo_columns
+   *   columns order needs to be longitude than latitude, for a single column
+   *   this can be switched via $latlon
    * @param $delimiter
+   *   defaults to ',', can be changed to ';' for example
    * @param $header_offset
+   *   defaults to 0 which means first line of CSV is header, you can skip more
+   *   lines by increasing ths
+   * @param bool $latlon
+   *   switch latitude longitude order for single column CSV, set to true if
+   *   longitude comes after latitude in your single column CSV
    *
    * @return false|string
    * @throws \League\Csv\Exception
