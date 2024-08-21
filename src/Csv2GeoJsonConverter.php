@@ -83,7 +83,7 @@ class Csv2GeoJsonConverter {
     foreach ($this->reader->getRecords() as $record) {
       $this->geoJson['features'][] = $this->getFeature($record);
     }
-    return json_encode($this->geoJson);
+    return !empty($this->geoColumns) ? json_encode($this->geoJson) : FALSE;
   }
 
   /**
