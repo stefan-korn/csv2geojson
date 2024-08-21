@@ -1,0 +1,8 @@
+{
+  "name": "stefan-korn/csv2geojson",
+  "description": "convert CSV to GeoJSON",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=8.1"
+  }
+}
