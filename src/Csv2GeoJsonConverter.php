@@ -33,18 +33,26 @@ class Csv2GeoJsonConverter {
    * @var string[] default columns to search for if no columns are specified
    */
   protected $defaultGeoColumns = [
-    'lat',
     'lon',
-    'latitude',
+    'lat',
     'longitude',
+    'latitude',
     'latlon',
     'coordinates',
     'geopoint',
     'geopunkt',
     'koordinaten',
-    'breitengrad',
     'längengrad',
+    'breitengrad',
   ];
+
+  /**
+   * @var bool order of latitude and longitude in CSV columns
+   *
+   * false means first longitude, second latitude
+   * true means inversed
+   */
+  protected $latlon = FALSE;
 
   /**
    * @var \League\Csv\Reader
@@ -63,10 +71,11 @@ class Csv2GeoJsonConverter {
    * @return false|string
    * @throws \League\Csv\Exception
    */
-  public function convert($csv_string, $name = FALSE, $geo_columns = [], $delimiter = FALSE, $header_offset = 0) {
+  public function convert($csv_string, $name = FALSE, $geo_columns = [], $delimiter = FALSE, $header_offset = 0, $latlon = FALSE) {
     if ($name) {
       $this->setFeatureCollectionName($name);
     }
+    $this->latlon = $latlon;
     $this->reader = Reader::createFromString($csv_string);
     if ($delimiter) {
       $this->reader->setDelimiter($delimiter);
@@ -201,7 +210,11 @@ class Csv2GeoJsonConverter {
     switch (count($this->geoColumns)) {
       case 1:
         $geocolumn = reset($this->geoColumns);
-        return array_map('floatval', explode(',', $record[$geocolumn]));
+        $coordinates = array_map('floatval', explode(',', $record[$geocolumn]));
+        if ($this->latlon) {
+          return array_reverse($coordinates);
+        }
+        return $coordinates;
       case 2:
         $coordinates = [];
         foreach ($this->geoColumns as $geocolumn) {
